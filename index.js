@@ -1,54 +1,44 @@
-(function(){
-  const akanNames = {
-    Sunday:   { male: "Kwasi",   female: "Akosua" },
-    Monday:   { male: "Kwadwo",  female: "Adwoa" },
-    Tuesday:  { male: "Kwabena", female: "Abenaa" },
-    Wednesday:{ male: "Kwaku",   female: "Akua" },
-    Thursday: { male: "Yaw",     female: "Yaa" },
-    Friday:   { male: "Kofi",    female: "Afua" },
-    Saturday: { male: "Kwame",   female: "Ama" }
-  };
+const akanNames = {
+  Sunday:    { male: "Kwasi",   female: "Akosua" },
+  Monday:    { male: "Kwadwo",  female: "Adwoa"  },
+  Tuesday:   { male: "Kwabena", female: "Abenaa" },
+  Wednesday: { male: "Kwaku",   female: "Akua"   },
+  Thursday:  { male: "Yaw",     female: "Yaa"    },
+  Friday:    { male: "Kofi",    female: "Afua"   },
+  Saturday:  { male: "Kwame",   female: "Ama"    }
+};
 
-  const form = document.getElementById('akanForm');
-  const result = document.getElementById('result');
-  const resetBtn = document.getElementById('resetBtn');
+const birthdateInput = document.getElementById("birthdate");
+const genderInput = document.getElementById("gender");
+const resultDiv = document.getElementById("result");
 
-  function showMessage(msg){
-    result.hidden = false;
-    result.textContent = msg;
+function showAkanName() {
+  const birthdate = birthdateInput.value;
+  const gender = genderInput.value;
+
+  if (!birthdate || !gender) {
+    resultDiv.style.color = "red";
+    resultDiv.textContent = "Please select both date and gender.";
+    return;
   }
 
-  function getDayNameFromDate(date){
-    // Use UTC to avoid timezone surprises when date input has no time
-    const d = new Date(date + 'T00:00:00');
-    const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-    return days[d.getDay()];
+  const date = new Date(birthdate);
+  if (isNaN(date.getTime())) {
+    resultDiv.style.color = "red";
+    resultDiv.textContent = "Invalid date.";
+    return;
   }
 
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    const dob = document.getElementById('dob').value;
-    const gender = document.getElementById('gender').value;
+  const dayOfWeek = date.toLocaleString('en-US', { weekday: 'long' });
+  const akanName = akanNames[dayOfWeek][gender];
 
-    if(!dob || !gender){
-      showMessage('Please enter your birthdate and select gender.');
-      return;
-    }
+  resultDiv.style.color = "green";
+  resultDiv.textContent = `You were born on a ${dayOfWeek}. Your Akan name is ${akanName}.`;
+}
 
-    const dayName = getDayNameFromDate(dob);
-    const nameObj = akanNames[dayName];
-    if(!nameObj){
-      showMessage('Could not determine Akan name.');
-      return;
-    }
+// Update result when either input changes
+birthdateInput.addEventListener("change", showAkanName);
+genderInput.addEventListener("change", showAkanName);
 
-    const akanName = nameObj[gender];
-    showMessage(`You were born on a ${dayName}. Your Akan name is ${akanName}.`);
-  });
 
-  resetBtn.addEventListener('click', function(){
-    form.reset();
-    result.hidden = true;
-    result.textContent = '';
-  });
-})();
+
