@@ -46,11 +46,3 @@ This tradition comes from the Akan people of Ghana.
 
 ---
 
-## 💡 Example
-- **Input**: Birthdate = `2000-08-11`, Gender = `Male`  
-- **Output**: "You were born on a Friday. Your Akan name is **Kofi**."
-
----
-
-## 📜 License
-This project is open-source and free to use for learning purposes.
