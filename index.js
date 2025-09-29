@@ -1,44 +1,78 @@
+// Akan Names Data
 const akanNames = {
-  Sunday:    { male: "Kwasi",   female: "Akosua" },
-  Monday:    { male: "Kwadwo",  female: "Adwoa"  },
-  Tuesday:   { male: "Kwabena", female: "Abenaa" },
-  Wednesday: { male: "Kwaku",   female: "Akua"   },
-  Thursday:  { male: "Yaw",     female: "Yaa"    },
-  Friday:    { male: "Kofi",    female: "Afua"   },
-  Saturday:  { male: "Kwame",   female: "Ama"    }
+  0: { male: "Kwasi", female: "Akosua" },   // Sunday
+  1: { male: "Kwadwo", female: "Adwoa" },   // Monday
+  2: { male: "Kwabena", female: "Abenaa" }, // Tuesday
+  3: { male: "Kwaku", female: "Akua" },     // Wednesday
+  4: { male: "Yaw", female: "Yaa" },        // Thursday
+  5: { male: "Kofi", female: "Afua" },      // Friday
+  6: { male: "Kwame", female: "Ama" }       // Saturday
 };
 
-const birthdateInput = document.getElementById("birthdate");
-const genderInput = document.getElementById("gender");
-const resultDiv = document.getElementById("result");
+// Function to calculate Akan name
+function generateAkanName() {
+  // Get user inputs
+  const day = parseInt(document.getElementById("day").value);
+  const month = parseInt(document.getElementById("month").value);
+  const year = document.getElementById("year").value;
+  const gender = document.querySelector("input[name='gender']:checked");
 
-function showAkanName() {
-  const birthdate = birthdateInput.value;
-  const gender = genderInput.value;
-
-  if (!birthdate || !gender) {
-    resultDiv.style.color = "red";
-    resultDiv.textContent = "Please select both date and gender.";
+  // Validate input
+  if (isNaN(day) || day < 1 || day > 31) {
+    alert("Please enter a valid day (1 - 31).");
     return;
   }
 
-  const date = new Date(birthdate);
-  if (isNaN(date.getTime())) {
-    resultDiv.style.color = "red";
-    resultDiv.textContent = "Invalid date.";
+  if (isNaN(month) || month < 1 || month > 12) {
+    alert("Please enter a valid month (1 - 12).");
     return;
   }
 
-  const dayOfWeek = date.toLocaleString('en-US', { weekday: 'long' });
-  const akanName = akanNames[dayOfWeek][gender];
+  if (!year || year.length !== 4 || isNaN(year)) {
+    alert("Please enter a valid 4-digit year.");
+    return;
+  }
 
-  resultDiv.style.color = "green";
-  resultDiv.textContent = `You were born on a ${dayOfWeek}. Your Akan name is ${akanName}.`;
+  if (!gender) {
+    alert("Please select a gender.");
+    return;
+  }
+
+  // Split year into CC and YY
+  const CC = parseInt(year.substring(0, 2));
+  const YY = parseInt(year.substring(2));
+
+  const DD = day;
+  const MM = month;
+
+  // Formula: d = ((4 * CC - 2 * CC - 1) + (5 * YY / 4) + (26 * (MM + 1) / 10) + DD) % 7
+  // Using your given formula (rewritten properly):
+  let d = ((4 * CC - 2 * CC - 1) + (5 * YY / 4) + (26 * (MM + 1) / 10) + DD) % 7;
+
+  // Convert to integer day index (0 - 6)
+  d = Math.floor(d);
+
+  // Ensure positive index
+  if (d < 0) {
+    d = (d + 7) % 7;
+  }
+
+  // Retrieve Akan name
+  const selectedGender = gender.value;
+  const akanName = akanNames[d][selectedGender];
+
+  // Display result
+  document.getElementById("result").innerText = 
+    `You were born on ${getDayName(d)}. Your Akan name is ${akanName}.`;
 }
 
-// Update result when either input changes
-birthdateInput.addEventListener("change", showAkanName);
-genderInput.addEventListener("change", showAkanName);
+// Helper: Get day name
+function getDayName(index) {
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  return days[index];
+}
+
+
 
 
 
